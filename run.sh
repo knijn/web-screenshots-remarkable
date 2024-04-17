@@ -1,1 +1,1 @@
-docker run -v $HOME/.config/rmapi/:/home/app/.config/rmapi/ webscreenshots 
+docker run -v $HOME/.config/rmapi/:/root/.config/rmapi/ webscreenshots 
