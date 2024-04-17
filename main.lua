@@ -12,15 +12,20 @@ for _,o in pairs(config.sites) do
     local expectedWaitTime = o.waitTime + 3 + 5
     
     print("Making screenshot (approximately " .. expectedWaitTime .. " seconds)")
-    os.execute("python3 screenshot.py " .. o.url .. " \"" .. o.fileName .. ".png\" " .. o.waitTime)
     
+    if o.backend == "nodriver" then
+        os.execute("python3 screenshot.py " .. o.url .. " \"" .. o.fileName .. ".png\" " .. o.waitTime) 
+    else
+        os.execute("node screenshot.js " .. o.url .. " \"" .. o.fileName .. ".png\"")   
+    end
     print("Converting to PDF")
-    os.execute("convert \"tmp/" .. o.fileName .. ".png\" \"tmp/" .. o.fileName .. ".pdf\"")
+    os.execute("convert \"" .. o.fileName .. ".png\" \"" .. o.fileName .. ".pdf\"")
 
-    local localFile = " \"tmp/" .. o.fileName .. ".pdf\""
+    local localFile = " \"" .. o.fileName .. ".pdf\""
     local remarkFile = " \"" .. o.fileName .. "\""
 
     print("Copying " .. localFile .. " to " .. remarkFile)
+    
     if config.overwrite then
         os.execute("rmapi rm " .. remarkFile)
     end

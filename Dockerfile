@@ -7,6 +7,14 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 RUN apt-get -y update
 RUN apt-get install -y google-chrome-stable
+RUN apt-get install -yqq unzip
+RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+
+# Now we install NodeJS
+RUN wget https://deb.nodesource.com/setup_18.x -O nodesource_setup.sh
+RUN bash nodesource_setup.sh
+RUN apt-get install -y nodejs
 
 # For some reason imagemagick disallows converting to pdf so here's a fix for that
 RUN sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
@@ -23,6 +31,8 @@ COPY . /app
 WORKDIR /app
 #RUN mkdir /app/tmp
 RUN pip install -r requirements.txt
+RUN npm install
+RUN npx puppeteer browsers install chrome
 
 
 CMD ["lua", "main.lua"]
